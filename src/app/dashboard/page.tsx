@@ -8,7 +8,7 @@ import { RadialProgress } from "@/components/ui/RadialProgress";
 import { LineChart } from "@/components/ui/LineChart";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Apple, Beef, Wheat, Flame, Utensils } from "lucide-react";
+import { Apple, Beef, Wheat, Flame, Utensils, FlaskConical } from "lucide-react";
 
 function startOfDay(date = new Date()) {
 	const d = new Date(date);
