@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+    /* NaLinha - tema claro suave */
+    --background: #F7F8FB;
+    --foreground: #0F172A;           /* slate-900 */
+    --card: #FFFFFF;
+    --accent: #EEF2FF;               /* indigo-50 suave */
+    --primary: #4F46E5;              /* indigo-600 */
+    --primary-foreground: #FFFFFF;
+    --success: #10B981;              /* emerald-500 */
+    --danger: #EF4444;               /* red-500 */
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-accent: var(--accent);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+}
+
+/* Dark já é o padrão do app */
+
+body {
+    background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(79,70,229,0.08), transparent 60%),
+        radial-gradient(900px 600px at 90% 110%, rgba(16,185,129,0.06), transparent 60%),
+        var(--background);
+    color: var(--foreground);
+}
+
+/* Plano de fundo com ícones de alimentos (SVG inline, leve) */
+.food-icons-bg {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: -1;
+	background-image:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 24 24' fill='none' stroke='%236366F1' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E"), /* prato */
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v9'/%3E%3Cpath d='M7 3v9'/%3E%3Cpath d='M5 3v9'/%3E%3Cpath d='M14 3l4 0'/%3E%3Cpath d='M16 3v9'/%3E%3C/svg%3E"), /* talheres (garfos/faca estilizados) */
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10h16a0 0 0 0 1 0 0v2a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6v-2a0 0 0 0 1 0 0Z'/%3E%3Cpath d='M8 10V7h8v3'/%3E%3Cpath d='M12 7c0-1 .8-2 2-2'/%3E%3C/svg%3E"); /* prato de sopa */
+	/* Vários ícones, bem espaçados e discretos (6 posições) */
+	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+	background-size: 150px 150px, 170px 170px, 140px 140px, 150px 150px, 170px 170px, 140px 140px;
+	background-position:
+		left 40px top 60px,          /* prato TL */
+		right 60px top 80px,          /* talheres TR */
+		left 8% center,               /* sopa CL */
+		right 12% center,             /* prato CR */
+		left 60px bottom 70px,        /* talheres BL */
+		right 80px bottom 60px;       /* sopa BR */
+	opacity: .06;
+}
+
+/* Sidebar efeitos */
+.sidebar-link {
+	transition: transform 150ms ease, background-color 150ms ease;
+}
+.sidebar-link:hover { transform: translateX(2px); }
+.sidebar-link.active { background: color-mix(in oklab, var(--accent), white 40%); }
+
+/* Indicador ativo (usado via pseudo-elemento utilitário) */
+.sidebar-indicator {
+	position: relative;
+}
+.sidebar-indicator::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 2px;
+	height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--success));
+	opacity: 0;
+	transition: opacity 150ms ease;
+}
+.sidebar-indicator.active::before { opacity: 1; }
+
+/* Elevação suave para cards */
+.elevated { 
+    border-color: color-mix(in oklab, var(--foreground), transparent 90%);
+}
+.elevated:hover { 
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* Stripe sutil no topo dos cards analíticos */
+.accent-stripe { position: relative; }
+.accent-stripe::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 2px;
+	width: 100%;
+	background: linear-gradient(90deg, var(--primary), var(--success));
+	opacity: 0.6;
+}
+
+/* Scroll-snap para KPIs no mobile */
+.kpi-snap { overflow-x: auto; scroll-snap-type: x mandatory; }
+.kpi-snap > * { scroll-snap-align: start; min-width: 70%; }
+
+/* Botão com gradiente neon (violet→cyan) */
+.btn-gradient {
+    background: linear-gradient(90deg, var(--primary), #6366F1);
+    border: none;
+}
+
+/* Tabela zebra + sticky header */
+.table-zebra thead th {
+	position: sticky;
+	top: 0;
+	background: color-mix(in oklab, var(--card), black 10%);
+	backdrop-filter: saturate(140%) blur(8px);
+}
+.table-zebra tbody tr:nth-child(odd) {
+	background: color-mix(in oklab, var(--card), white 2%);
+}

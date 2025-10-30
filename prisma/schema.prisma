@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Enums =====
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Unit {
+  GRAM
+  MILLILITER
+  PIECE
+  SERVING
+}
+
+enum TargetMode {
+  MANUAL
+  AUTO
+}
+
+// ===== Models =====
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+
+  foods        Food[]
+  meals        Meal[]
+  targets      DailyTarget[]
+}
+
+// Food entries can be user-specific or global (visible to all via isGlobal)
+model Food {
+  id               String   @id @default(cuid())
+  name             String
+  // Default serving info
+  servingValue     Float    @default(100)
+  servingUnit      Unit     @default(GRAM)
+
+  // Nutritional info per serving unit above
+  kcalPerServing   Float
+  proteinPerServing Float   @default(0)
+  carbsPerServing   Float   @default(0)
+  fatPerServing     Float   @default(0)
+
+  // Owner and visibility
+  isGlobal         Boolean  @default(false)
+  userId           String?
+  user             User?    @relation(fields: [userId], references: [id])
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  mealItems        MealItem[]
+
+  @@index([name])
+}
+
+model Meal {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  // e.g. "Café", "Almoço", "Jantar", ou custom
+  name      String
+  date      DateTime // usaremos apenas a parte da data para agrupamento diário
+
+  items     MealItem[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model MealItem {
+  id        String  @id @default(cuid())
+  mealId    String
+  meal      Meal    @relation(fields: [mealId], references: [id])
+
+  foodId    String
+  food      Food    @relation(fields: [foodId], references: [id])
+
+  // quantity is in "serving" units of the food (could be grams, ml, piece, serving)
+  quantity  Float   @default(1)
+}
+
+model DailyTarget {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+
+  mode         TargetMode @default(MANUAL)
+  // Targets per day
+  kcal         Int
+  protein      Int?       // grams
+  carbs        Int?       // grams
+  fat          Int?       // grams
+
+  effectiveDate DateTime  // date from which the target applies
+
+  createdAt    DateTime   @default(now())
+
+  @@index([userId, effectiveDate])
+}
