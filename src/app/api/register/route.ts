@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json(user, { status: 201 });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: err.errors.map((e) => e.message).join(", ") }, { status: 400 });
+      return NextResponse.json({ error: err.issues.map((e) => e.message).join(", ") }, { status: 400 });
     }
     return NextResponse.json({ error: "Erro ao registrar" }, { status: 500 });
   }
