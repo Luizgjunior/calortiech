@@ -72,8 +72,8 @@ async function getData(userId: string, period: Period) {
 type SearchParams = { period?: Period };
 
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
-	const session = await getServerSession(authConfig);
-	const userId = (session?.user as any)?.id as string | undefined;
+	const session = (await getServerSession(authConfig)) as any;
+	const userId = session?.user?.id as string | undefined;
 	if (!userId) {
 		return (
 			<div className="min-h-[60vh] grid place-items-center">
