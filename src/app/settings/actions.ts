@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/lib/auth";
 import { cookies } from "next/headers";
-import { hash, compare } from "bcrypt";
+import { hash, compare } from "bcryptjs";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
