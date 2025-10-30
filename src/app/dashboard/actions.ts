@@ -12,8 +12,9 @@ function startOfDay(date = new Date()) {
 }
 
 export async function saveDailyTarget(formData: FormData) {
-	const session = await getServerSession(authConfig);
-	if (!session?.user?.id) throw new Error("Não autenticado");
+	const session = (await getServerSession(authConfig)) as any;
+	const userId = session?.user?.id as string | undefined;
+	if (!userId) throw new Error("Não autenticado");
 
 	const mode = (formData.get("mode") as string) || "MANUAL";
 	const kcal = Number(formData.get("kcal") || 0);
@@ -25,7 +26,7 @@ export async function saveDailyTarget(formData: FormData) {
 
 	await prisma.dailyTarget.create({
 		data: {
-			userId: session.user.id as string,
+			userId,
 			mode: mode === "AUTO" ? "AUTO" : "MANUAL",
 			kcal: Math.round(kcal),
 			protein: protein != null ? Math.round(protein) : null,
